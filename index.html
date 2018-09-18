@@ -70,7 +70,7 @@ scene.add( DirectionalLight );
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
 controls.addEventListener( 'change', light_update );
-
+controls.enableZoom = false;
 
 
 function light_update()
