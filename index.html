@@ -69,6 +69,10 @@ DirectionalLight.position.set( 0, 0, 1);
 scene.add( DirectionalLight );
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+controls.enableDamping = true;
+controls.dampingFactor = .2;
+      
 controls.addEventListener( 'change', light_update );
 controls.enableZoom = false;
 
@@ -99,6 +103,10 @@ function light_update()
 
        update( );
        render( );
+       
+              controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+
+       
      };
 
      GameLoop( );
