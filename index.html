@@ -32,6 +32,9 @@ loader.load( 'models/Happy99angel.obj', function ( object ) {
   object.traverse( function ( node ) {
 
     if ( node.isMesh ) node.material = material;
+    
+        object.rotation.set( 0, 3.2, 0 );
+
 
   } );
 
