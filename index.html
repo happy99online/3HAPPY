@@ -18,29 +18,92 @@
 
     <script>
      var scene = new THREE.Scene( );
+     scene.background = new THREE.Color( 0x5cf927 );
      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
+
+
      // Create a material
+
 var textureLoader = new THREE.TextureLoader();
-var map = textureLoader.load('models/Happy99angel.png');
-var material = new THREE.MeshPhongMaterial({map: map});
+var texture1 = textureLoader.load('models/Happy99angel.png');
+var material1 = new THREE.MeshPhongMaterial({map: texture1});
 
 var loader = new THREE.OBJLoader();
-loader.load( 'models/happy99rotate1.obj', function ( object ) {
+loader.load( 'models/happy99rotate2.obj', function ( object ) {
 
   // For any meshes in the model, add our material.
   object.traverse( function ( node ) {
 
-    if ( node.isMesh ) node.material = material;
-    
-        object.rotation.set( 0, 3.2, 0 );
+    if ( node.isMesh ) node.material = material1;
 
+    object.rotation.set( 0, 3.2, 0 );
 
   } );
 
   // Add the model to the scene.
   scene.add( object );
 } );
+
+// Create a material
+var textureLoader = new THREE.TextureLoader();
+var texture2 = textureLoader.load('models/UVshoe99.png');
+var material2 = new THREE.MeshPhongMaterial({map: texture2});
+
+var loader = new THREE.OBJLoader();
+loader.load( 'models/happy99rotate_shoe2.obj', function ( object ) {
+
+  // For any meshes in the model, add our material.
+  object.traverse( function ( node ) {
+
+    if ( node.isMesh ) node.material = material2;
+
+  } );
+
+
+// Add the model to the scene.
+scene.add( object );
+} );
+
+// Load texture
+var loader = new THREE.TextureLoader();
+loader.crossOrigin = true;
+
+var texture = loader.load(
+  'models/sky.jpg',
+  onTextureLoad,
+  function(xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  function(xhr) {
+    console.log('An error happened');
+  }
+);
+
+function onTextureLoad(texture) {
+  console.log(texture);
+  var geometry = new THREE.PlaneGeometry(1000, 1000, 0);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture
+  });
+  var backgroundMesh = new THREE.Mesh(geometry, material);
+
+  // The background plane shouldn't care about the z-buffer.
+  backgroundMesh.material.depthTest = true;
+  backgroundMesh.material.depthWrite = true;
+  backgroundMesh.position.z = -10;
+  backgroundMesh.position.y = -20;
+
+  backgroundMesh.rotateX( - Math.PI / 2);
+
+
+
+  scene.add(backgroundMesh);
+  render();
+
+
+
+}
 
 
 
@@ -61,30 +124,44 @@ loader.load( 'models/happy99rotate1.obj', function ( object ) {
 
 
 
-camera.position.z = 10
-
-
-
+camera.position.z = 10;
 
 
 var DirectionalLight = new THREE.DirectionalLight( 0xFFFFFF, 1.0);
 DirectionalLight.position.set( 0, 0, 1);
 scene.add( DirectionalLight );
 
-controls = new THREE.OrbitControls( camera, renderer.domElement );
+controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 controls.enableDamping = true;
-controls.dampingFactor = .3;
+controls.dampingFactor = .2;
 controls.enablePan = false;
-controls.addEventListener( 'change', light_update );
 controls.enableZoom = false;
+controls.addEventListener( 'change', light_update );
 controls.autoRotate = true;
 controls.autoRotateSpeed = .5;
+
+
+
+
+
+
+
+
 
 
 function light_update()
 {
     DirectionalLight.position.copy( camera.position );
+
+
+}
+
+function texture_update()
+{
+    backgroundMesh.position( camera.position );
+
+
 }
 // game logic
      var update = function( )
@@ -95,11 +172,15 @@ function light_update()
 
      };
 
+
+
 //draw Scene
      var render = function( )
      {
        renderer.render( scene, camera );
      };
+
+
 
 //run game loop (update, render, repeat)
      var GameLoop = function( )
@@ -107,11 +188,10 @@ function light_update()
        requestAnimationFrame( GameLoop );
 
        update( );
-       render( );
-       
-              controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
 
-       
+       render( );
+       controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+
      };
 
      GameLoop( );
